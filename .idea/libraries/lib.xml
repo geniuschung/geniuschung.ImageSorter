@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/ImageSorterJavaFx/lib/metadata-extractor-2.8.1.jar!/" />
+      <root url="jar://$USER_HOME$/ImageSorterJavaFx/lib/xmpcore-5.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/ImageSorterJavaFx/lib/lombok.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
