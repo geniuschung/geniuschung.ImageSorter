@@ -2,17 +2,20 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import lombok.Data;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 public class ImageSorterService {
-    ImageSorterData imageSorterData = new ImageSorterData();
+    private ImageSorterData imageSorterData = new ImageSorterData();
     List<File> orgFiles;
     TextArea logArea;
 
@@ -26,50 +29,23 @@ public class ImageSorterService {
 
     private ImageSorterValidator imageSorterValidator = new ImageSorterValidator();
 
-    public void goImgArrange()  {
+    public void goImgArrange()    {
         int copyCnt = 0;
         int skipCnt = 0;
         try {
             imageSorterValidator.checkImagArrange(imageSorterData);
 
             orgFiles = getImgFiles();
-            /*
-            File tarDir = null;
+            File[] tarDir = {new File("")};
 
             orgFiles.stream()
-                    .filter(file -> {
-
-                try {
-                    tarDir  = getTarDir( new ImageSorterDataImgFile(file) );
-                }catch(Exception e) {
-                    e.printStackTrace();
-                }
-                checkTarFile(file,tarDir);
-
-            })
-            .peek(file -> copyImgFile(file, tarDir));
-
-            */
-
-
-            for (File orgFile : orgFiles) {
-                ImageSorterDataImgFile imageSorterDataImgFile =  new ImageSorterDataImgFile(orgFile);
-                File tarDir = getTarDir(imageSorterDataImgFile);
-                if (checkTarFile(orgFile, tarDir)) {
-                    copyImgFile(orgFile, tarDir);
-                    logAdd(orgFile.getName() + "복사");
-                    copyCnt++;
-                    //logArea.setText(logArea.getText()+orgFile.getName() + "복사");
-                } else {
-                    logAdd(orgFile.getName() + "존재함 skip");
-                    skipCnt++;
-                    //logArea.setText(logArea.getText()+orgFile.getName()+"존재함 skip");
-                }
-            }
+                    .filter(file -> checkTarFile(file, getTarDir(new ImageSorterDataImgFile(file))))
+                    .forEach(file -> copyImgFile(file, getTarDir(new ImageSorterDataImgFile(file))));
 
             logAdd("이미지 정리 완료 ========>");
             logAdd("이미지 정리 건수 : " + copyCnt);
             logAdd("이미지 Skip 건수 : " + skipCnt);
+
 
         }catch(Exception e){
             logAdd(e.getMessage());
@@ -79,10 +55,11 @@ public class ImageSorterService {
     }
 
     public void logAdd(String log){
-        StringBuffer logBuffer = new StringBuffer(logArea.getText());
+        //StringBuffer logBuffer = new StringBuffer(logArea.getText());
+        StringBuffer logBuffer = new StringBuffer();
         logBuffer.append(log);
         logBuffer.append("\n");
-        logArea.setText(logBuffer.toString());
+        //logArea.setText(logBuffer.toString());
 
     }
 

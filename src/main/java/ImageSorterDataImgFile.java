@@ -29,24 +29,28 @@ public class ImageSorterDataImgFile {
     private LocalDateTime createDateTime;
 
 
-    public ImageSorterDataImgFile(File orgFile) throws Exception{
-        Metadata metadata = JpegMetadataReader.readMetadata(new FileInputStream(orgFile));
-        Iterable<Directory> iter = metadata.getDirectories();
+    public ImageSorterDataImgFile(File orgFile) {
+        try {
+            Metadata metadata = JpegMetadataReader.readMetadata(new FileInputStream(orgFile));
+            Iterable<Directory> iter = metadata.getDirectories();
 
-        FileTime fileTime = Files.readAttributes(orgFile.toPath(), BasicFileAttributes.class).creationTime();
-        LocalDateTime.ofInstant(fileTime.toInstant(),ZoneId.systemDefault());
+            FileTime fileTime = Files.readAttributes(orgFile.toPath(), BasicFileAttributes.class).creationTime();
+            LocalDateTime.ofInstant(fileTime.toInstant(), ZoneId.systemDefault());
 
 
-        LocalDateTime imgTime = StreamSupport.stream(iter.spliterator(), false)
-                .filter(dir -> dir.getName().equals("Exif IFD0"))
-                .map(dir -> LocalDateTime.ofInstant(dir.getDate(TAG_TYPE_CREATE_DATE).toInstant(), ZoneId.systemDefault()))
-                .findFirst()
-                .orElseGet(()->LocalDateTime.ofInstant(fileTime.toInstant(),ZoneId.systemDefault()));
+            LocalDateTime imgTime = StreamSupport.stream(iter.spliterator(), false)
+                    .filter(dir -> dir.getName().equals("Exif IFD0"))
+                    .map(dir -> LocalDateTime.ofInstant(dir.getDate(TAG_TYPE_CREATE_DATE).toInstant(), ZoneId.systemDefault()))
+                    .findFirst()
+                    .orElseGet(() -> LocalDateTime.ofInstant(fileTime.toInstant(), ZoneId.systemDefault()));
 
-        this.createMonth = String.format("%02d",imgTime.getMonthValue());
-        this.createYear = String.valueOf(imgTime.getYear());
-        this.createDateTime = imgTime;
-        this.createDt = imgTime.toString();
+            this.createMonth = String.format("%02d", imgTime.getMonthValue());
+            this.createYear = String.valueOf(imgTime.getYear());
+            this.createDateTime = imgTime;
+            this.createDt = imgTime.toString();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         /*
 
 
